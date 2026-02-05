@@ -3,14 +3,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:latest.integration'
+        classpath "org.jsonschema2pojo:jsonschema2pojo-gradle-plugin:1.2.2"
     }
 }
 
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.4.0'
-    id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.springframework.boot' version '3.3.5'
+    id 'io.spring.dependency-management' version '1.1.6'
 }
 
 group = 'com.airbnb.be'
