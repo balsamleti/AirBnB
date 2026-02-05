@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "channel": {
+      "type": "string"
+    },
+    "application": {
+      "type": "string"
+    },
+    "identifier": {
+      "type": "string"
+    },
+    "systemDateTime": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

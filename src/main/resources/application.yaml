@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: airbnb-manager
+  main:
+    web-application-type: reactive
+  data:
+    mongodb:
+      uri: ${mongodb.url}
+server:
+  port: '8080'
+  servlet:
+    context-path: /airbnb-manager
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+    metrics:
+      enabled: true
+      exports:
+        prometheus:
+          enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
+springdoc:
+  swagger-ui:
+    url: /api.yaml
+    path: /index.html
+app:
+  base-path: ${server.servlet.context-path}
+  service-name: airbnb-manager
+  consumer-name: AIRBNB_MANAGER
+  mongodb:
+    collection:
+      bookings: bookings
+      lookup: reference
+  rest:
+    url:
+      communications-api: ${app-host}:8902/communications-api-v1
