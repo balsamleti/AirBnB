@@ -34,7 +34,7 @@ public class ABRoutes {
     }
 
     @Bean
-    RouterFunction<ServerResponse> user(UserProfileHandler handler) {
+    public RouterFunction<ServerResponse> user(UserProfileHandler handler) {
         return route()
                 .GET(basePath.concat("/users/profile/{Id}"), handler::getUser)
                 .POST(basePath.concat("/users/profile"), handler::createUser)
