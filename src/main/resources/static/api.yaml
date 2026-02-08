@@ -1,0 +1,163 @@
+openapi: 3.0.3
+info:
+  title: Air BnB Backend Service
+  version: 1.0.0
+servers:
+  - url: /airbnb-be-dev.balsamleti.com
+  - url: /airbnb-be-prd.balsamleti.com
+paths:
+  /users/profile:
+    get:
+      summary: Get my profile
+      operationId: getMyProfile
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+    patch:
+      summary: Update my profile
+      operationId: updateMyProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserProfile'
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /users/myBookings:
+    get:
+      summary: Get my bookings
+      operationId: getMyBookings
+      responses:
+        '200':
+          description: Booking list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+
+  /users/guests:
+    get:
+      summary: Get my guests
+      operationId: getGuests
+      responses:
+        '200':
+          description: Guest list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Guest'
+
+    post:
+      summary: Add a guest
+      operationId: addGuest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Guest'
+      responses:
+        '201':
+          description: Guest added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guest'
+
+  /users/guests/{guestId}:
+    put:
+      summary: Update a guest
+      operationId: updateGuest
+      parameters:
+        - name: guestId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Guest'
+      responses:
+        '200':
+          description: Guest updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guest'
+
+    delete:
+      summary: Remove a guest
+      operationId: deleteGuest
+      parameters:
+        - name: guestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Guest removed
+
+components:
+  schemas:
+
+    UserProfile:
+      type: object
+      required: [userId, name, email]
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        guests:
+          type: array
+          items:
+            $ref: '#/components/schemas/Guest'
+
+    UpdateUserProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+
+    Guest:
+      type: object
+      required: [name, age]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        age:
+          type: integer
+
+    Booking:
+      type: object
+      properties:
+        bookingId:
+          type: string
+        date:
+          type: string
+          format: date

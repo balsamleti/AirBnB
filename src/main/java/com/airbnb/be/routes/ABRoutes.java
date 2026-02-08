@@ -1,7 +1,9 @@
 package com.airbnb.be.routes;
 
+import lombok.Generated;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -11,7 +13,8 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 import static org.springframework.web.reactive.function.server.ServerResponse.ok;
 import static org.springframework.web.reactive.function.server.ServerResponse.temporaryRedirect;
 
-
+@Generated
+@Configuration
 public class ABRoutes {
 
     @Value("${app.base-path}")
@@ -29,7 +32,18 @@ public class ABRoutes {
                 .build();
     }
 
-
+//    @Bean
+//    RouterFunction<ServerResponse> userRoutes(UserProfileHandler handler) {
+//        return route()
+//                .GET("/users/profile", handler::getProfile)
+//                .PATCH("/users/profile", handler::updateProfile)
+//                .GET("/users/myBookings", handler::getMyBookings)
+//                .GET("/users/guests", handler::getGuests)
+//                .POST("/users/guests", handler::addGuest)
+//                .PUT("/users/guests/{guestId}", handler::updateGuest)
+//                .DELETE("/users/guests/{guestId}", handler::deleteGuest)
+//                .build();
+//    }
 
 
 }

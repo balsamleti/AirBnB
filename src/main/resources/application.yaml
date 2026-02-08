@@ -1,11 +1,9 @@
 spring:
-  application:
-    name: airbnb-manager
   main:
     web-application-type: reactive
   data:
     mongodb:
-      uri: ${mongodb.url}
+      uri: mongodb+srv://${mongodb.username}:${mongodb.secret}@${mongodb.host}/${mongodb.database}
 server:
   port: '8080'
   servlet:
