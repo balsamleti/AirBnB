@@ -43,10 +43,3 @@ bootJar {
 jar {
     enabled = true
 }
-
-bootRun {
-    jvmArgs = [
-            "-Dhttps.protocols=TLSv1.2",
-            "-Djdk.tls.client.protocols=TLSv1.2"
-    ]
-}

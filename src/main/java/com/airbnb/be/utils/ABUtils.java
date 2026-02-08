@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.server.ServerRequest;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,6 +27,7 @@ public class ABUtils {
                 .startTime(new AtomicReference<>(currentTimeMillis()))
                 .method(req.method().name())
                 .path(req.path())
+                .id(getPathVariable(req, ID))
                 .channel(req.headers().firstHeader(CHANNEL))
                 .application(req.headers().firstHeader(APPLICATION))
                 .identifier(req.headers().firstHeader(IDENTIFIER))
@@ -44,6 +46,14 @@ public class ABUtils {
 
     public static String getQueryParam(ServerRequest req, String name) {
         return req.queryParam(name).map(String::valueOf).orElse(null);
+    }
+
+    private static String getPathVariable(ServerRequest req, String key) {
+        try {
+            return req.pathVariable(key);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     public static String getSysTime() {

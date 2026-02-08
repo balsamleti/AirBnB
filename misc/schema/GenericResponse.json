@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "idType": {
+      "type": "string"
+    },
+    "responseDetails": {
+      "type": "object",
+      "properties": {
+        "responseMessage": {
+          "type": "string"
+        },
+        "dateTime": {
+          "type": "string"
+        },
+        "responseCode": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

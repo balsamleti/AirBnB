@@ -1,6 +1,10 @@
 package com.airbnb.be.handler;
 
 import com.airbnb.be.api.ApiError;
+import com.airbnb.be.generated.GenericResponse;
+import com.airbnb.be.generated.users.User;
+import com.airbnb.be.modals.Payload;
+import com.airbnb.be.services.UsersService;
 import io.github.cdimascio.openapi.Validate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,20 +23,25 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 @RequiredArgsConstructor
 public class UserProfileHandler {
 
-//    private final Validate<ApiError> validate;
+    private final Validate<ApiError> validate;
+    private final UsersService service;
 
-//    @NotNull
-//    public Mono<ServerResponse> getProfile(ServerRequest request) {
-//        return validate.request(request, () -> cacheService.get(
-//                getParam(request)).flatMap(o -> ok().bodyValue(o)).switchIfEmpty(noContent().build()));
-//    }
-//
-//    @NotNull
-//    public Mono<ServerResponse> addGuest(ServerRequest request) {
-//        return validate.request(request)
-//                .withBody(GettingStarted.class, reqBody -> ok().body(cacheService.savePageOne(
-//                        SOPayload.builder().gettingStarted(reqBody).params(getParam(request)).build()), ServiceResponse.class));
-//    }
+    @NotNull
+    public Mono<ServerResponse> getUser(ServerRequest request) {
+        return validate.request(request, () -> service.getUserDetails(
+                getParam(request)).flatMap(o -> ok().bodyValue(o)).switchIfEmpty(noContent().build()));
+    }
 
+    @NotNull
+    public Mono<ServerResponse> createUser(ServerRequest request) {
+        return validate.request(request)
+                .withBody(User.class, reqBody -> ok().body(service.createUserDetails(
+                        Payload.builder().user(reqBody).params(getParam(request)).build()), GenericResponse.class));
+    }
+
+    @NotNull
+    public Mono<ServerResponse> patchUser(ServerRequest request) {
+        return validate.request(request, null);
+    }
 
 }

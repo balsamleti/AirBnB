@@ -46,7 +46,7 @@ public class ABLookupService {
     }
 
     protected void initializeApplicationList() {
-        lookupMongoTemplate.findById(APPLICATION, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("application list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> applicationList.add(entry.getKey()), error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
+        lookupMongoTemplate.findById(APPLICATIONS, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("application list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> applicationList.add(entry.getKey()), error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
     }
 
     protected void initializeChannelList() {

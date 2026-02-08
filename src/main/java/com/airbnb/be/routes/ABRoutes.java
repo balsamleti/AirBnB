@@ -1,5 +1,6 @@
 package com.airbnb.be.routes;
 
+import com.airbnb.be.handler.UserProfileHandler;
 import lombok.Generated;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,16 +33,22 @@ public class ABRoutes {
                 .build();
     }
 
+    @Bean
+    RouterFunction<ServerResponse> user(UserProfileHandler handler) {
+        return route()
+                .GET(basePath.concat("/users/profile/{Id}"), handler::getUser)
+                .POST(basePath.concat("/users/profile"), handler::createUser)
+                .PATCH(basePath.concat("/users/profile/{Id}"), handler::patchUser)
+                .build();
+    }
+
 //    @Bean
-//    RouterFunction<ServerResponse> userRoutes(UserProfileHandler handler) {
+//    RouterFunction<ServerResponse> guest() {
 //        return route()
-//                .GET("/users/profile", handler::getProfile)
-//                .PATCH("/users/profile", handler::updateProfile)
-//                .GET("/users/myBookings", handler::getMyBookings)
-//                .GET("/users/guests", handler::getGuests)
-//                .POST("/users/guests", handler::addGuest)
-//                .PUT("/users/guests/{guestId}", handler::updateGuest)
-//                .DELETE("/users/guests/{guestId}", handler::deleteGuest)
+//                .GET("/users/guests", handler::getProfile)
+//                .POST("/users/guests", )
+//                .PATCH("/users/guests/{guestId}", handler::updateProfile)
+//                .DELETE("/users/guests/{guestId}", )
 //                .build();
 //    }
 

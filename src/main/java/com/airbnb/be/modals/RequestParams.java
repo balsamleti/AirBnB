@@ -16,6 +16,7 @@ public class RequestParams {
     private String application;
     private String identifier;
     private String transactionId;
+    private String id;
     private String idType;
     private String systemDateTime;
     private String method;

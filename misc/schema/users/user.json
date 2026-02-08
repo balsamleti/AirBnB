@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "contactNumber": {
+      "type": "string"
+    },
+    "gender": {
+      "type": "string",
+      "enum": ["MALE", "FEMALE", "OTHER"]
+    },
+    "dateOfBirth": {
+      "type": "string"
+    }
+  },
+  "required": ["email","contactNumber", "name", "gender"],
+  "additionalProperties": false
+}
