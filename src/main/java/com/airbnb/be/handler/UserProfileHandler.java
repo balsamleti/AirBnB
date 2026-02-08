@@ -29,7 +29,8 @@ public class UserProfileHandler {
     @NotNull
     public Mono<ServerResponse> getUser(ServerRequest request) {
         return validate.request(request, () -> service.getUserDetails(
-                getParam(request)).flatMap(o -> ok().bodyValue(o)).switchIfEmpty(noContent().build()));
+                Payload.builder().params(getParam(request)).build())
+                .flatMap(o -> ok().bodyValue(o)).switchIfEmpty(noContent().build()));
     }
 
     @NotNull

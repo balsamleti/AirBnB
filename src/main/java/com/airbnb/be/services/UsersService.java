@@ -44,9 +44,11 @@ public class UsersService {
                 .doFinally(x -> log.info(ABM_API_RES_LOGGER, context(params)));
     }
 
-    public Mono<User> getUserDetails(RequestParams params) {
-        return just(params)
-                .doOnNext(p -> log.info(ABM_API_REQ_LOGGER, context(p), p))
+    public Mono<User> getUserDetails(Payload payload) {
+        var params = payload.getParams();
+        return just(payload)
+                .doOnNext(p -> log.info(ABM_API_REQ_LOGGER, context(params), params))
+                .handle(validateApplication(params))
                 .flatMap(this::fetchData)
                 .map(usersMapper::map)
                 .doOnError(x -> log.info(ABM_API_ERR_LOGGER, context(params), x.getMessage()))
@@ -61,12 +63,12 @@ public class UsersService {
                 .doFinally(msg -> log.info(MONGO_DB_SEARCH_LOGGER, context(p.getParams(), startTime)));
     }
 
-    private Mono<UsersDocument> fetchData(RequestParams params) {
+    private Mono<UsersDocument> fetchData(Payload p) {
         var startTime = new AtomicReference<Long>();
-        return reactiveMongoTemplate.findById(params.getId(), UsersDocument.class)
+        return reactiveMongoTemplate.findById(p.getParams().getId(), UsersDocument.class)
                 .doOnSubscribe(x -> startTime.set(System.currentTimeMillis()))
-                .doOnError(ex -> log.error(MONGO_DB_ERR_LOGGER, context(params), ex.getMessage()))
-                .doFinally(msg -> log.info(MONGO_DB_SEARCH_LOGGER, context(params, startTime)));
+                .doOnError(ex -> log.error(MONGO_DB_ERR_LOGGER, context(p.getParams()), ex.getMessage()))
+                .doFinally(msg -> log.info(MONGO_DB_SEARCH_LOGGER, context(p.getParams(), startTime)));
     }
 
     private BiConsumer<Payload, SynchronousSink<Payload>> validateApplication(RequestParams rp) {

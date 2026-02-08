@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Date;
+
 @Data
 @RequiredArgsConstructor
 @Document(collection = "users")
@@ -18,9 +20,9 @@ public class UsersDocument {
     private String email;
     private String contactNumber;
     private String gender;
-    private String createdOn;
+    private Date createdOn;
     private String createdBy;
-    private String lastUpdate;
+    private Date lastUpdate;
     private Boolean isDeleted;
 
 }
