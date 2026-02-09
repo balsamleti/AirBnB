@@ -1,15 +1,21 @@
 package com.airbnb.be.utils;
 
+import com.airbnb.be.api.ApiError;
+import com.airbnb.be.api.ApiException;
+import com.airbnb.be.modals.Payload;
 import com.airbnb.be.modals.RequestParams;
+import com.airbnb.be.services.ABLookupService;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.reactive.function.server.ServerRequest;
+import reactor.core.publisher.SynchronousSink;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import static com.airbnb.be.api.ApiConstants.*;
@@ -72,6 +78,16 @@ public class ABUtils {
 
     public static long getElapsedTime(RequestParams req) {
         return currentTimeMillis() - req.getStartTime().get();
+    }
+
+    public static BiConsumer<Payload, SynchronousSink<Payload>> validateApplication(RequestParams rp, ABLookupService service) {
+        return (req, sink) -> {
+            if (service.isValidApplication(rp.getApplication())) {
+                sink.next(req);
+            } else {
+                sink.error(new ApiException(ApiError.of(10009)));
+            }
+        };
     }
 
 }
