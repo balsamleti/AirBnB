@@ -24,12 +24,10 @@ public class ABLookupService {
 
     private static final Map<Integer, String> errorMap = new HashMap<>();
     private static final Set<String> applicationList = new HashSet<>();
-    private static final Set<String> channelList = new HashSet<>();
 
     @Scheduled(fixedRate = 90000L)
     public void init() {
         initializeApplicationList();
-        initializeChannelList();
         initializeErrorList();
     }
 
@@ -41,16 +39,8 @@ public class ABLookupService {
         return applicationList.contains(app);
     }
 
-    public boolean isValidChannel(String channel) {
-        return channelList.contains(channel);
-    }
-
     protected void initializeApplicationList() {
         lookupMongoTemplate.findById(APPLICATIONS, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("application list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> applicationList.add(entry.getKey()), error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
-    }
-
-    protected void initializeChannelList() {
-        lookupMongoTemplate.findById(CHANNEL, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("channel list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> channelList.add(entry.getKey()), error -> log.error("channel list ".concat(DATA_INIT_FAILURE)));
     }
 
     protected void initializeErrorList() {
