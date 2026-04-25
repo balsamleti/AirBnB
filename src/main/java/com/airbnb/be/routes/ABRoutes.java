@@ -39,6 +39,7 @@ public class ABRoutes {
                 .GET(basePath.concat("/users/profile/{Id}"), handler::getUser)
                 .POST(basePath.concat("/users/profile"), handler::createUser)
                 .PATCH(basePath.concat("/users/profile/{Id}"), handler::patchUser)
+                .DELETE(basePath.concat("/users/profile/{Id}"), handler::deleteUser)
                 .build();
     }
 

@@ -20,6 +20,10 @@ public class ApiConstants {
     public static final String ID_TYPE = "idType";
     public static final String USER_ID = "userId";
     public static final String ERRORS = "errors";
+    public static final String DELETED = "deleted";
+    public static final String REVISION_HISTORY = "revisionHistory";
+    public static final String UPDATED_DATE = "updatedDate";
+    public static final String UPDATED_BY = "updatedBy";
     public static final String SUCCESS = "SUCCESS";
     public static final String SUCCESS_VALUE = "200";
     public static final String ID = "Id";

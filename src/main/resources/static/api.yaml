@@ -33,6 +33,26 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
   /users/profile/{Id}:
+    delete:
+      summary: Delete user profile
+      operationId: deleteUserOps
+      tags: [ User ]
+      parameters:
+        - $ref: '#/components/parameters/UUID'
+        - $ref: '#/components/parameters/Channel'
+        - $ref: '#/components/parameters/XApplication'
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: User profile retrieved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     get:
       summary: Get user profile
       operationId: getProfile

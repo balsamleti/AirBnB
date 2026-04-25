@@ -14,16 +14,18 @@ import java.util.Date;
 public class UsersDocument {
 
     @Id
-    private String id;
+    private String userId;
     private String username;
     private String name;
     private String email;
     private String contactNumber;
+    private String dateOfBirth;
     private String gender;
     private Date createdOn;
     private String createdBy;
+    private String updatedBy;
     private Date lastUpdate;
-    private Boolean isDeleted;
+    private Boolean deleted;
 
 }
 

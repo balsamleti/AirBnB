@@ -10,13 +10,13 @@ import org.mapstruct.factory.Mappers;
 
 import static com.airbnb.be.api.ApiConstants.*;
 
-@Mapper(config = MapStructMapping.class, imports = ABUtils.class)
+@Mapper(imports = ABUtils.class, implementationPackage = "com.airbnb.be.mapper.impl")
 public interface GenericResponseMapper {
 
-    GenericResponseMapper MAPPER = Mappers.getMapper(GenericResponseMapper.class);
+    GenericResponseMapper GENERIC_RESPONSE_MAPPER = Mappers.getMapper(GenericResponseMapper.class);
 
-    @Mapping(target = "id", source = "doc.id")
-    @Mapping(target = "idType",  constant = USER_ID)
+    @Mapping(target = "id", source = "doc.userId")
+    @Mapping(target = "idType", constant = USER_ID)
     @Mapping(target = "responseDetails.responseCode", constant = SUCCESS_VALUE)
     @Mapping(target = "responseDetails.dateTime", expression = "java(ABUtils.getSysTime())")
     @Mapping(target = "responseDetails.responseMessage", constant = SUCCESS)

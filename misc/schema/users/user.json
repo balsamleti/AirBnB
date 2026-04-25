@@ -17,12 +17,24 @@
     },
     "gender": {
       "type": "string",
-      "enum": ["MALE", "FEMALE", "OTHER"]
+      "enum": [
+        "MALE",
+        "FEMALE",
+        "OTHER"
+      ]
     },
     "dateOfBirth": {
       "type": "string"
+    },
+    "deleted": {
+      "type": "boolean"
     }
   },
-  "required": ["email","contactNumber", "name", "gender"],
+  "required": [
+    "email",
+    "contactNumber",
+    "name",
+    "gender"
+  ],
   "additionalProperties": false
 }
