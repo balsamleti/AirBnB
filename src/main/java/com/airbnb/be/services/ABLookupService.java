@@ -25,7 +25,7 @@ public class ABLookupService {
     private static final Map<Integer, String> errorMap = new HashMap<>();
     private static final Set<String> applicationList = new HashSet<>();
 
-    @Scheduled(fixedRate = 90000L)
+    @Scheduled(fixedRate = 900000L)
     public void init() {
         initializeApplicationList();
         initializeErrorList();
@@ -40,11 +40,15 @@ public class ABLookupService {
     }
 
     protected void initializeApplicationList() {
-        lookupMongoTemplate.findById(APPLICATIONS, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("application list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> applicationList.add(entry.getKey()), error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
+        lookupMongoTemplate.findById(APPLICATIONS, LookUpDocument.class).map(LookUpDocument::getData).flatMapIterable(Map::entrySet).doFinally(msg -> log.info("application list ".concat(DATA_INIT_COMPLETE))).subscribe(entry -> applicationList.add(entry.getKey().toString()), error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
     }
 
     protected void initializeErrorList() {
-        lookupMongoTemplate.findById(ERRORS, LookUpDocument.class).map(LookUpDocument::getData).map(m -> m.entrySet().stream().collect(toMap(e -> parseInt(e.getKey()), e -> e.getValue().toString()))).doFinally(msg -> log.info("error list ".concat(DATA_INIT_COMPLETE))).subscribe(errorMap::putAll, error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
+        lookupMongoTemplate.findById(ERRORS, LookUpDocument.class)
+                .map(LookUpDocument::getData)
+                .map(m -> m.entrySet().stream()
+                        .collect(toMap(e -> parseInt(e.getKey().toString()), e -> e.getValue().toString())))
+                .doFinally(msg -> log.info("error list ".concat(DATA_INIT_COMPLETE))).subscribe(errorMap::putAll, error -> log.error("application list ".concat(DATA_INIT_FAILURE)));
     }
 
 }

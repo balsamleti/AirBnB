@@ -1,8 +1,6 @@
 package com.airbnb.be.handler;
 
 import com.airbnb.be.api.ApiError;
-import com.airbnb.be.api.ApiException;
-import com.airbnb.be.generated.GenericResponse;
 import com.airbnb.be.generated.users.User;
 import com.airbnb.be.modals.Payload;
 import com.airbnb.be.services.UsersService;
@@ -10,15 +8,16 @@ import io.github.cdimascio.openapi.Validate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
-import static com.airbnb.be.api.ApiError.of;
 import static com.airbnb.be.utils.ABUtils.getParam;
-import static org.springframework.web.reactive.function.server.ServerResponse.noContent;
-import static org.springframework.web.reactive.function.server.ServerResponse.ok;
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.web.reactive.function.server.ServerResponse.*;
 
 @Slf4j
 @Component
@@ -37,10 +36,11 @@ public class UserProfileHandler {
 
     @NotNull
     public Mono<ServerResponse> createUser(ServerRequest request) {
-        return validate.request(request)
-                .withBody(User.class, reqBody -> ok().body(
-                        service.createUserDetails(Payload.builder().user(reqBody).params(getParam(request)).build()),
-                        GenericResponse.class));
+        return validate.request(request).withBody(User.class, reqBody ->
+                service.createUserDetails(Payload.builder().user(reqBody).params(getParam(request)).build())
+                        .flatMap(body -> status(CREATED).bodyValue(body))
+                        .onErrorResume(DuplicateKeyException.class,
+                                ex -> status(CONFLICT).bodyValue(ApiError.of(CONFLICT, ex.getMessage()))));
     }
 
     @NotNull

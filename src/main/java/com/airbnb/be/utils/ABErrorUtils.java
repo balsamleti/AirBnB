@@ -11,7 +11,7 @@ public class ABErrorUtils {
         } else if (errString.equals("body empty")) {
             return 100002;
         }
-        return 100003;
+        return 10014;
     }
 
 }

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BiFunction;
 
 import static com.airbnb.be.api.ApiConstants.*;
 import static com.airbnb.be.mapper.GenericResponseMapper.GENERIC_RESPONSE_MAPPER;
@@ -40,6 +42,7 @@ public class UsersService {
     private final ObjectMapper objectMapper;
     private final ReactiveMongoTemplate reactiveMongoTemplate;
     private final ABLookupService lookupService;
+    private final BiFunction<String, String, Criteria> feildUpdate = (key, value) -> Criteria.where(key).is(value);
 
     public Mono<GenericResponse> createUserDetails(Payload payload) {
         var params = payload.getParams();
@@ -60,7 +63,6 @@ public class UsersService {
         user.setDeleted(true);
         p0.setUser(user);
         p0.setParams(p.getParams());
-
         return just(p)
                 .doOnNext(o -> log.info(ABM_API_REQ_LOGGER, context(params), params))
                 .handle(validateApplication(params, lookupService))
@@ -94,12 +96,18 @@ public class UsersService {
                 .doFinally(x -> log.info(ABM_API_RES_LOGGER, context(params)));
     }
 
-    private Mono<UsersDocument> saveData(Payload p) {
+    public Mono<UsersDocument> saveData(Payload p) {
+        var params = p.getParams();
         var startTime = new AtomicReference<Long>();
-        return reactiveMongoTemplate.save(USER_MAPPER.map(p))
-                .doOnSubscribe(x -> startTime.set(System.currentTimeMillis()))
-                .doOnError(ex -> log.error(MONGO_DB_ERR_LOGGER, context(p.getParams()), ex.getMessage()))
-                .doFinally(msg -> log.info(MONGO_DB_SEARCH_LOGGER, context(p.getParams(), startTime)));
+        return just(buildDuplicateCriteria(p, params))
+                .doOnNext(o -> log.info(ABM_API_REQ_LOGGER, context(params), params))
+                .flatMap(criteria -> reactiveMongoTemplate.count(Query.query(criteria), UsersDocument.class))
+                .filter(count -> count > 0)
+                .doOnNext(count -> log.info("{}: Duplicate user creation attempt for UserID:{}", context(params), params.getId()))
+                .flatMap(x -> Mono.<UsersDocument>error(new DuplicateKeyException("User already exist in our system")))
+                .switchIfEmpty(reactiveMongoTemplate.save(USER_MAPPER.map(p)).doOnSubscribe(x -> startTime.set(System.currentTimeMillis())))
+                .doOnError(x -> log.info(ABM_API_ERR_LOGGER, context(params), x.getMessage()))
+                .doFinally(x -> log.info(ABM_API_RES_LOGGER, context(params)));
     }
 
     private Mono<UsersDocument> findUserById(Payload p) {
@@ -140,14 +148,23 @@ public class UsersService {
     }
 
     private Map<String, Object> getUserDetailsAsMap(UsersDocument user) {
-        return objectMapper.copy().setSerializationInclusion(JsonInclude.Include.NON_NULL).convertValue(user, Map.class);
+        return objectMapper.copy().setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                .convertValue(user, Map.class);
     }
 
     private Query queryWithoutHistory(Criteria criteria, RequestParams params) {
         var query = query(criteria.and(DELETED).in(null, false));
         query.fields().exclude(REVISION_HISTORY);
-        log.info("{}: MongoDB Search critria:{}", context(params));
+        log.info("{}: MongoDB Search critria:{}", context(params), query);
         return query;
+    }
+
+    private Criteria buildDuplicateCriteria(Payload p, RequestParams params) {
+        var genericCriteria = Criteria.where("USER_ID").in(params.getId())
+                .and("email").is(p.getUser().getEmail())
+                .and("deleted").in(null, false);
+        return new Criteria().andOperator(genericCriteria,
+                feildUpdate.apply("contactNumber", p.getUser().getContactNumber()));
     }
 
 }

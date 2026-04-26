@@ -13,5 +13,5 @@ import java.util.Map;
 public class LookUpDocument {
     @Id
     private String type;
-    private Map<String, Object> data;
+    private Map<Object, Object> data;
 }

@@ -43,15 +43,4 @@ public class ABRoutes {
                 .build();
     }
 
-//    @Bean
-//    RouterFunction<ServerResponse> guest() {
-//        return route()
-//                .GET("/users/guests", handler::getProfile)
-//                .POST("/users/guests", )
-//                .PATCH("/users/guests/{guestId}", handler::updateProfile)
-//                .DELETE("/users/guests/{guestId}", )
-//                .build();
-//    }
-
-
 }

@@ -3,11 +3,13 @@ package com.airbnb.be.api;
 import lombok.Data;
 import lombok.Generated;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.server.ServerRequest;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.airbnb.be.services.ABLookupService.errMsg;
 import static com.airbnb.be.utils.ABErrorUtils.parseError;
@@ -27,6 +29,13 @@ public class ApiError {
         this.message = message;
     }
 
+    public ApiError(HttpStatusCode status, String message, int statusCode, List<String> errors) {
+        this.status = status;
+        this.message = message;
+        this.code = statusCode;
+        this.errors = errors;
+    }
+
     public ApiError(HttpStatusCode status, int code, String message) {
         this.status = status;
         this.code = code;
@@ -40,16 +49,18 @@ public class ApiError {
         this.errors = errors;
     }
 
-    public static ApiError of(HttpStatusCode status, String message) {
-        return new ApiError(status, message);
-    }
-
     public static ApiError of(HttpStatusCode status, int code) {
         return new ApiError(status, code, errMsg(code));
     }
 
     public static ApiError of(int code) {
         return new ApiError(HttpStatus.BAD_REQUEST, code, errMsg(code));
+    }
+
+    public static ApiError of(@Nullable HttpStatusCode statusCode, String msg) {
+        return Objects.nonNull(msg) && parseError(msg) != 10014 ?
+                of(statusCode, parseError(msg)) :
+                new ApiError(statusCode, msg, statusCode.value(), null);
     }
 
 }

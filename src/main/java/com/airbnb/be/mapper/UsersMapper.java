@@ -1,6 +1,5 @@
 package com.airbnb.be.mapper;
 
-import com.airbnb.be.config.MapStructMapping;
 import com.airbnb.be.generated.users.User;
 import com.airbnb.be.modals.Payload;
 import com.airbnb.be.modals.UsersDocument;
